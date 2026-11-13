@@ -33,8 +33,13 @@ MENUBAR_DIR = ROOT / "macos" / "MenubarApp"
 DMGCANVAS_TEMPLATE = ROOT / "icb_dmg_canvas.dmgcanvas"
 
 # Code signing constants
-DEVELOPER_ID = "Developer ID Application: Keith Vassallo (W4SF9AYV8T)"
-NOTARYTOOL_PROFILE = "notarytool-profile"
+# Override with environment variables to build under another signing identity:
+#   ICB_DEVELOPER_ID        Developer ID used by --production
+#   ICB_NOTARYTOOL_PROFILE  notarytool keychain profile used by --notarize
+#   ICB_SIGN_IDENTITY       identity for debug builds (default "-", ad-hoc)
+DEVELOPER_ID = os.environ.get("ICB_DEVELOPER_ID", "Developer ID Application: Keith Vassallo (W4SF9AYV8T)")
+NOTARYTOOL_PROFILE = os.environ.get("ICB_NOTARYTOOL_PROFILE", "notarytool-profile")
+DEBUG_SIGN_IDENTITY = os.environ.get("ICB_SIGN_IDENTITY", "-")
 
 
 def run(cmd: list[str], *, cwd: Path | None = None, env: dict[str, str] | None = None) -> None:
@@ -202,7 +207,7 @@ def stage_app_bundle(version: str, menubar_binary: Path) -> None:
 
 def sign_app_bundle(production: bool = False) -> None:
     """Sign the app bundle (menubar binary; resources are data only)."""
-    sign_identity = DEVELOPER_ID if production else "-"
+    sign_identity = DEVELOPER_ID if production else DEBUG_SIGN_IDENTITY
     print(f"→ Signing app bundle ({'production' if production else 'debug'})")
     entitlements_path = ENTITLEMENTS_FILE
 
