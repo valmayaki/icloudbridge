@@ -18,6 +18,12 @@ class CalendarMirrorError(RuntimeError):
 async def run_calendar_mirror(config: AppConfig, *, dry_run: bool = False) -> dict:
     """Mirror every EventKit calendar into the configured CalDAV account."""
     cal_cfg, rem_cfg = config.calendar, config.reminders
+    # One gate for every caller (API route and scheduler). A dry run is still
+    # allowed while disabled, so the mirror can be previewed before enabling.
+    if not cal_cfg.enabled and not dry_run:
+        raise CalendarMirrorError(
+            "Calendar mirror is disabled (set calendar.enabled = true); dry runs are allowed"
+        )
     url = cal_cfg.caldav_url or rem_cfg.caldav_url
     username = cal_cfg.caldav_username or rem_cfg.caldav_username
     password = rem_cfg.get_caldav_password()
