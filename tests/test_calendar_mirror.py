@@ -232,3 +232,10 @@ def test_scheduler_reports_calendar_errors_as_failures():
     failures, failed_units, units = summarize_sync_result(result)
     assert failures == ["Home (me@gmail.com): 403"] and failed_units == 1 and units == 1
     assert summarize_sync_result({"created": 3, "errors": 0, "error_messages": []})[0] == []
+
+
+async def test_runner_refuses_to_write_while_disabled():
+    config = AppConfig()
+    assert config.calendar.enabled is False
+    with pytest.raises(CalendarMirrorError, match="disabled"):
+        await run_calendar_mirror(config, dry_run=False)
