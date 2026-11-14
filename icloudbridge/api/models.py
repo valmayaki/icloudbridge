@@ -345,7 +345,7 @@ class NextcloudCredentialRequest(BaseModel):
 class ScheduleCreate(BaseModel):
     """Request model for creating a schedule."""
 
-    services: list[str] = Field(..., description="List of services to sync (notes, reminders, photos)")
+    services: list[str] = Field(..., description="List of services to sync (notes, reminders, photos, calendar)")
     # Deprecated legacy field maintained for backwards compatibility with older clients
     service: str | None = Field(
         default=None,

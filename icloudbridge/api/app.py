@@ -147,6 +147,7 @@ def create_app() -> FastAPI:
         notes,
         passwords,
         photos,
+        calendar,
         reminders,
         schedules,
         settings,
@@ -156,6 +157,7 @@ def create_app() -> FastAPI:
     app.include_router(config.router, prefix="/api/config", tags=["Configuration"])
     app.include_router(notes.router, prefix="/api/notes", tags=["Notes"])
     app.include_router(reminders.router, prefix="/api/reminders", tags=["Reminders"])
+    app.include_router(calendar.router, prefix="/api/calendar", tags=["Calendar"])
     app.include_router(passwords.router, prefix="/api/passwords", tags=["Passwords"])
     app.include_router(photos.router, prefix="/api/photos", tags=["Photos"])
     app.include_router(schedules.router, prefix="/api/schedules", tags=["Schedules"])
