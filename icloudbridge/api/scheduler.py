@@ -496,6 +496,9 @@ class SchedulerManager:
         if service == "reminders":
             async with exclusive_sync("reminders", wait=True, dry_run=bool(config.get("dry_run", False))):
                 return await self._sync_reminders(config)
+        if service == "calendar":
+            async with exclusive_sync("calendar", wait=True, dry_run=bool(config.get("dry_run", False))):
+                return await self._sync_calendar(config)
         if service == "passwords":
             return await self._sync_passwords(config)
         if service == "photos":
@@ -618,6 +621,15 @@ class SchedulerManager:
         total_stats["folder_count"] = len(folder_results)
         total_stats["folder_results"] = folder_results
         return total_stats
+
+    async def _sync_calendar(self, config: dict) -> dict:
+        """Mirror every Mac calendar into CalDAV (read-only mirror)."""
+        from icloudbridge.core.calendar_sync import run_calendar_mirror
+
+        self.config.ensure_data_dir()
+        if not self.config.calendar.enabled:
+            raise ValueError("Calendar mirror is disabled (calendar.enabled = false)")
+        return await run_calendar_mirror(self.config, dry_run=bool(config.get("dry_run", False)))
 
     async def _sync_reminders(self, config: dict) -> dict:
         """Execute reminders sync.

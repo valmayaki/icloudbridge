@@ -34,7 +34,9 @@
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>iCloudBridge needs full access to Reminders to read and sync your reminder lists.</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>iCloudBridge needs calendar access if you choose to sync reminders with calendar-backed lists.</string>
+	<string>iCloudBridge reads your calendars to mirror them to your CalDAV server.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>iCloudBridge needs full access to Calendars to mirror every calendar to your CalDAV server (read-only).</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>iCloudBridge needs Photos access to import and sync your photos and videos.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

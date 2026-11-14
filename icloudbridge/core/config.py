@@ -546,6 +546,33 @@ class NotificationsConfig(BaseSettings):
         return bool(self.enabled and self.smtp_host and self.from_address and self.to_addresses)
 
 
+class CalendarConfig(BaseSettings):
+    """Read-only mirror of every Mac calendar into CalDAV (ADR: calendar mirror).
+
+    CalDAV settings left empty fall back to the Reminders ones, so the mirror
+    writes to the same server and account as Reminders.
+    """
+
+    enabled: bool = False
+    caldav_url: str | None = None
+    caldav_username: str | None = None
+    caldav_ssl_verify_cert: bool | str | None = None
+    # Mirror window around now; recurring events are expanded inside it.
+    window_past_days: int = Field(default=30, ge=0, le=730)
+    window_future_days: int = Field(default=365, ge=1, le=1095)
+    # Calendar titles, or "Title (Account)", to leave out.
+    exclude_calendars: list[str] = Field(default_factory=list)
+    # Only collections with this prefix are created, changed or deleted.
+    collection_prefix: str = "mirror-"
+
+    @field_validator("caldav_url", mode="before")
+    @classmethod
+    def validate_url(cls, v: str | None) -> str | None:
+        if v and not v.startswith(("http://", "https://")):
+            raise ValueError("CalDAV URL must start with http:// or https://")
+        return v
+
+
 class AppConfig(BaseSettings):
     """Main application configuration."""
 
@@ -558,6 +585,7 @@ class AppConfig(BaseSettings):
     general: GeneralConfig = Field(default_factory=GeneralConfig)
     notes: NotesConfig = Field(default_factory=NotesConfig)
     reminders: RemindersConfig = Field(default_factory=RemindersConfig)
+    calendar: CalendarConfig = Field(default_factory=CalendarConfig)
     photos: PhotosConfig = Field(default_factory=PhotosConfig)
     passwords: PasswordsConfig = Field(default_factory=PasswordsConfig)
     notifications: NotificationsConfig = Field(default_factory=NotificationsConfig)

@@ -10,7 +10,7 @@ from icloudbridge.api.dependencies import ConfigDep
 from icloudbridge.api.models import ScheduleCreate, ScheduleResponse, ScheduleUpdate
 from icloudbridge.utils.db import SchedulesDB
 
-ALLOWED_SCHEDULE_SERVICES = {"notes", "reminders", "photos"}
+ALLOWED_SCHEDULE_SERVICES = {"notes", "reminders", "photos", "calendar"}
 
 
 def _normalize_services(services: list[str] | None, legacy_service: str | None) -> list[str]:
